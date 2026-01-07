@@ -89,6 +89,30 @@ body {
   border: 6px solid #ff5e5b;
   box-shadow: 4px 4px #333;
 }
+.hero-video {
+  position: relative;
+}
+.melon-box {
+  position: relative;
+  height: 320px;
+  border: 6px solid #ff5e5b;
+  box-shadow: 4px 4px #333;
+  background: linear-gradient(135deg, #fff4b8, #b7fff7);
+  overflow: hidden;
+}
+.melon-pop-counter {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 3;
+  background: #333;
+  color: #fff;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  box-shadow: 2px 2px #ff5e5b;
+}
 .hero-card {
   background: #ffde59;
   border: 6px solid #d63447;
@@ -168,6 +192,9 @@ body {
 .hero-video video:hover {
   box-shadow: 0 0 20px 5px rgba(255, 94, 91, 0.7);
 }
+.melon-box:hover {
+  box-shadow: 0 0 20px 5px rgba(255, 94, 91, 0.4);
+}
 
 /* 4. Marquee Color‑Shift */
 @keyframes colorShift {
@@ -244,6 +271,136 @@ body {
   animation: bounceAround var(--duration) ease-in-out infinite var(--delay),
     neonFlash 2s ease-in-out infinite alternate;
 }
+.melon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  filter: drop-shadow(0 0 12px rgba(0, 255, 0, 0.45));
+  animation: melonFloat var(--melon-duration) ease-in-out infinite
+      var(--melon-delay),
+    neonFlash 2s ease-in-out infinite alternate;
+}
+.melon-splash {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: splashFade 0.6s ease-out forwards;
+  z-index: 4;
+}
+
+.melon-splash::before,
+.melon-splash::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+
+.melon-splash::before {
+  background: radial-gradient(
+    circle,
+    rgba(255, 94, 91, 0.9) 0%,
+    rgba(255, 94, 91, 0.5) 35%,
+    rgba(255, 94, 91, 0) 70%
+  );
+  animation: splashRing 0.45s ease-out forwards;
+}
+
+.melon-splash::after {
+  background: conic-gradient(
+    from 0deg,
+    rgba(0, 255, 0, 0.6),
+    rgba(255, 222, 89, 0.9),
+    rgba(255, 94, 91, 0.8),
+    rgba(0, 255, 0, 0.6)
+  );
+  mix-blend-mode: multiply;
+  filter: blur(2px);
+  animation: splashSpin 0.55s ease-out forwards;
+}
+
+.melon-splash .seed {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 8px;
+  background: #1a1a1a;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: seedBurst 0.5s ease-out forwards;
+}
+
+@keyframes splashRing {
+  0% {
+    transform: scale(0.4);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+@keyframes splashSpin {
+  0% {
+    transform: scale(0.6) rotate(0deg);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.4) rotate(160deg);
+    opacity: 0;
+  }
+}
+
+@keyframes seedBurst {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--seed-x), var(--seed-y)) rotate(var(--seed-rot))
+      scale(0.6);
+    opacity: 0;
+  }
+}
+
+@keyframes splashFade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes melonFloat {
+  0% {
+    transform: translate(var(--start-x), var(--start-y)) scale(0.9) rotate(0deg);
+  }
+  25% {
+    transform: translate(var(--quarter-x), var(--quarter-y)) scale(1.05)
+      rotate(90deg);
+  }
+  50% {
+    transform: translate(var(--mid-x), var(--mid-y)) scale(1.1) rotate(180deg);
+  }
+  75% {
+    transform: translate(var(--three-quarter-x), var(--three-quarter-y))
+      scale(1.05) rotate(270deg);
+  }
+  100% {
+    transform: translate(var(--end-x), var(--end-y)) scale(0.9) rotate(360deg);
+  }
+}
+
 
 /* Slice 1 - Diagonal bounce pattern */
 .slice:nth-of-type(1) {
