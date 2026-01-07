@@ -97,8 +97,23 @@ body {
   height: 320px;
   border: 6px solid #ff5e5b;
   box-shadow: 4px 4px #333;
-  background: linear-gradient(135deg, #fff4b8, #b7fff7);
+  background: linear-gradient(135deg, #ff5e5b, #1a1a1a);
   overflow: hidden;
+  animation: melonPulse 3s ease-in-out infinite, melonGlow 6s ease-in-out infinite;
+}
+.melon-eviction {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 10px rgba(255, 94, 91, 0.8);
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 5;
 }
 .melon-pop-counter {
   position: absolute;
@@ -112,6 +127,47 @@ body {
   font-size: 0.9rem;
   font-weight: bold;
   box-shadow: 2px 2px #ff5e5b;
+}
+.melon-toast-stack {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 4;
+  display: grid;
+  gap: 0.5rem;
+  width: min(240px, 70%);
+  pointer-events: none;
+}
+
+.melon-toast {
+  background: #1a1a1a;
+  color: #fff;
+  border: 2px solid #ff5e5b;
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+  box-shadow: 3px 3px rgba(0, 0, 0, 0.4);
+  animation: toastIn 0.35s ease-out, toastOut 0.45s ease-in 2.6s forwards;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+@keyframes toastIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastOut {
+  to {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.95);
+  }
 }
 .hero-card {
   background: #ffde59;
@@ -287,11 +343,11 @@ body {
 }
 .melon-splash {
   position: absolute;
-  width: 140px;
-  height: 140px;
+  width: 190px;
+  height: 190px;
   transform: translate(-50%, -50%);
   pointer-events: none;
-  animation: splashFade 0.6s ease-out forwards;
+  animation: splashFade 0.75s ease-out forwards;
   z-index: 4;
 }
 
@@ -306,56 +362,57 @@ body {
 .melon-splash::before {
   background: radial-gradient(
     circle,
-    rgba(255, 94, 91, 0.9) 0%,
-    rgba(255, 94, 91, 0.5) 35%,
+    rgba(255, 94, 91, 1) 0%,
+    rgba(255, 94, 91, 0.75) 30%,
     rgba(255, 94, 91, 0) 70%
   );
-  animation: splashRing 0.45s ease-out forwards;
+  animation: splashRing 0.55s ease-out forwards;
 }
 
 .melon-splash::after {
   background: conic-gradient(
     from 0deg,
-    rgba(0, 255, 0, 0.6),
-    rgba(255, 222, 89, 0.9),
-    rgba(255, 94, 91, 0.8),
-    rgba(0, 255, 0, 0.6)
+    rgba(0, 255, 0, 0.9),
+    rgba(255, 222, 89, 1),
+    rgba(255, 94, 91, 0.95),
+    rgba(0, 255, 0, 0.9)
   );
   mix-blend-mode: multiply;
-  filter: blur(2px);
-  animation: splashSpin 0.55s ease-out forwards;
+  filter: blur(1px) drop-shadow(0 0 12px rgba(255, 222, 89, 0.8));
+  animation: splashSpin 0.7s ease-out forwards;
 }
 
 .melon-splash .seed {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 12px;
-  height: 8px;
-  background: #1a1a1a;
+  width: 13px;
+  height: 9px;
+  background: #0c0c0c;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  animation: seedBurst 0.5s ease-out forwards;
+  box-shadow: 0 0 10px rgba(255, 222, 89, 0.9);
+  animation: seedBurst 0.6s ease-out forwards;
 }
 
 @keyframes splashRing {
   0% {
-    transform: scale(0.4);
+    transform: scale(0.3);
     opacity: 0.9;
   }
   100% {
-    transform: scale(1.2);
+    transform: scale(1.5);
     opacity: 0;
   }
 }
 
 @keyframes splashSpin {
   0% {
-    transform: scale(0.6) rotate(0deg);
-    opacity: 0.8;
+    transform: scale(0.5) rotate(0deg);
+    opacity: 0.95;
   }
   100% {
-    transform: scale(1.4) rotate(160deg);
+    transform: scale(1.8) rotate(220deg);
     opacity: 0;
   }
 }
@@ -367,7 +424,7 @@ body {
   }
   100% {
     transform: translate(var(--seed-x), var(--seed-y)) rotate(var(--seed-rot))
-      scale(0.6);
+      scale(0.5);
     opacity: 0;
   }
 }
@@ -398,6 +455,31 @@ body {
   }
   100% {
     transform: translate(var(--end-x), var(--end-y)) scale(0.9) rotate(360deg);
+  }
+}
+
+@keyframes melonGlow {
+  0% {
+    background: linear-gradient(135deg, #ff5e5b, #1a1a1a);
+  }
+  33% {
+    background: linear-gradient(135deg, #1a1a1a, #00c853);
+  }
+  66% {
+    background: linear-gradient(135deg, #00c853, #ff5e5b);
+  }
+  100% {
+    background: linear-gradient(135deg, #ff5e5b, #1a1a1a);
+  }
+}
+
+@keyframes melonPulse {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
   }
 }
 

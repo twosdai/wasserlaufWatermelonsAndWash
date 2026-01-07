@@ -1,10 +1,19 @@
-import { addScore } from "../state/store.js";
+import { addScore, onScoreChange } from "../state/store.js";
 
 let audioContext = null;
 const melonSize = 80;
 const initialMelonCount = 4;
 const maxMelonCount = 10;
 const spawnIntervalMs = 700;
+const toastDurationMs = 3200;
+const warningThresholds = new Map([
+  [5, "Please stop popping them. They're sensitive."],
+  [10, "Seriously, please stop popping them."],
+  [13, "YOU are hurting us."],
+  [20, "We will contact the authorities if this continues."],
+  [30, "Final warning. Step away from the melons."],
+  [50, "That's it. Go away."],
+]);
 
 function playPop() {
   if (!audioContext) {
@@ -68,6 +77,22 @@ function assignMelonPath(melon, box) {
   melon.style.setProperty("--melon-delay", `${delay}s`);
 }
 
+function showToast(message) {
+  const stack = document.querySelector("[data-toast-stack]");
+  if (!stack) {
+    return;
+  }
+
+  const toast = document.createElement("div");
+  toast.className = "melon-toast";
+  toast.textContent = message;
+  stack.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, toastDurationMs);
+}
+
 function createMelon(box) {
   const melon = document.createElement("img");
   melon.src = "https://i.imgur.com/uGpvvh6.jpeg";
@@ -105,6 +130,9 @@ export function initMelonClicker() {
     return;
   }
 
+  let spawnIntervalId = null;
+  const acknowledgedWarnings = new Set();
+
   const initialMelons = Array.from(box.querySelectorAll("[data-melon]"));
   initialMelons.forEach((melon) => {
     assignMelonPath(melon, box);
@@ -119,7 +147,7 @@ export function initMelonClicker() {
     }
   }
 
-  setInterval(() => {
+  spawnIntervalId = setInterval(() => {
     const currentCount = box.querySelectorAll("[data-melon]").length;
     if (currentCount >= maxMelonCount) {
       return;
@@ -135,6 +163,30 @@ export function initMelonClicker() {
       assignMelonPath(melon, box);
     });
   });
+
+  onScoreChange((score) => {
+    if (warningThresholds.has(score) && !acknowledgedWarnings.has(score)) {
+      acknowledgedWarnings.add(score);
+      showToast(warningThresholds.get(score));
+    }
+
+    if (score >= 50) {
+      if (spawnIntervalId) {
+        clearInterval(spawnIntervalId);
+        spawnIntervalId = null;
+      }
+      box.querySelectorAll("[data-melon]").forEach((melon) => {
+        melon.remove();
+      });
+      const existingMessage = box.querySelector(".melon-eviction");
+      if (!existingMessage) {
+        const message = document.createElement("div");
+        message.className = "melon-eviction";
+        message.textContent = "Go away.";
+        box.appendChild(message);
+      }
+    }
+  });
 }
 
 function createSplash(box, x, y) {
@@ -147,11 +199,11 @@ function createSplash(box, x, y) {
   for (let i = 0; i < seedCount; i += 1) {
     const seed = document.createElement("span");
     seed.className = "seed";
-    const distance = 40 + randomInt(50);
+    const distance = 60 + randomInt(90);
     const angle = Math.random() * Math.PI * 2;
     const seedX = Math.cos(angle) * distance;
     const seedY = Math.sin(angle) * distance;
-    const rotation = Math.round((Math.random() - 0.5) * 120);
+    const rotation = Math.round((Math.random() - 0.5) * 220);
     seed.style.setProperty("--seed-x", `${seedX}px`);
     seed.style.setProperty("--seed-y", `${seedY}px`);
     seed.style.setProperty("--seed-rot", `${rotation}deg`);
